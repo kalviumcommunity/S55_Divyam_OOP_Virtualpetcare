@@ -15,8 +15,8 @@ public:
         std::cout << "Name: " << name << ", Age: " << age << ", Health: " << health << ", Happiness: " << happiness << std::endl;
     }
 
-    virtual void feed() = 0; // Pure virtual function
-    virtual void play() = 0; // Pure virtual function
+    virtual void feed() = 0;
+    virtual void play() = 0;
 };
 
 class Dog : public Pet {
@@ -24,41 +24,73 @@ public:
     Dog(std::string petName, int petAge) : Pet(petName, petAge) {}
 
     void feed() override {
-        health += 10;
-        happiness += 5;
+        this->health += 10;
+        this->happiness += 5;
         std::cout << "Feeding the dog." << std::endl;
     }
 
     void play() override {
-        health += 5;
-        happiness += 15;
+        this->health += 5;
+        this->happiness += 10;
         std::cout << "Playing with the dog." << std::endl;
     }
 
     void makeSound() {
         std::cout << "Woof!" << std::endl;
     }
+
+    Dog& getThisDog() {
+        return *this;
+    }
 };
 
+class Cat : public Pet {
+public:
+    Cat(std::string petName, int petAge) : Pet(petName, petAge) {}
+
+    void feed() override {
+        this->health += 8;
+        this->happiness += 7;
+        std::cout << "Feeding the cat." << std::endl;
+    }
+
+    void play() override {
+        this->health += 6;
+        this->happiness += 9;
+        std::cout << "Playing with the cat." << std::endl;
+    }
+
+    void makeSound() {
+        std::cout << "Meow!" << std::endl;
+    }
+
+    Cat& getThisCat() {
+        return *this;
+    }
+};
 
 int main() {
-    // Creating a Dog object
-    Dog myDog("Bruno", 4);
+    Dog myDog("Bruno", 3);
+    Cat myCat("Whiskers", 2);
 
-    // Displaying initial status
     myDog.displayStatus();
+    myCat.displayStatus();
 
-    // Feeding the dog
     myDog.feed();
     myDog.displayStatus();
 
-    // Playing with the dog
     myDog.play();
     myDog.displayStatus();
 
-    // Making the dog sound
     myDog.makeSound();
+
+    myCat.feed();
+    myCat.displayStatus();
+
+    myCat.play();
+    myCat.displayStatus();
+
+    myCat.makeSound();
 
     return 0;
 }
-
