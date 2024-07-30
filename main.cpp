@@ -38,10 +38,6 @@ public:
     void makeSound() {
         std::cout << "Woof!" << std::endl;
     }
-
-    Dog& getThisDog() {
-        return *this;
-    }
 };
 
 class Cat : public Pet {
@@ -63,34 +59,60 @@ public:
     void makeSound() {
         std::cout << "Meow!" << std::endl;
     }
+};
 
-    Cat& getThisCat() {
-        return *this;
+class Bird : public Pet {
+public:
+    Bird(std::string petName, int petAge) : Pet(petName, petAge) {}
+
+    void feed() override {
+        this->health += 7;
+        this->happiness += 6;
+        std::cout << "Feeding the bird." << std::endl;
+    }
+
+    void play() override {
+        this->health += 4;
+        this->happiness += 8;
+        std::cout << "Playing with the bird." << std::endl;
+    }
+
+    void makeSound() {
+        std::cout << "Chirp!" << std::endl;
     }
 };
 
 int main() {
-    Dog myDog("Bruno", 3);
-    Cat myCat("Whiskers", 2);
+    Dog dogArray[2] = { Dog("Bruno", 3), Dog("Max", 2) };
+    Cat catArray[2] = { Cat("Whiskers", 2), Cat("Mittens", 1) };
+    Bird birdArray[2] = { Bird("Tweety", 1), Bird("Polly", 3) };
 
-    myDog.displayStatus();
-    myCat.displayStatus();
+    for(int i = 0; i < 2; i++) {
+        dogArray[i].displayStatus();
+        dogArray[i].feed();
+        dogArray[i].play();
+        dogArray[i].makeSound();
+        dogArray[i].displayStatus();
+        std::cout << std::endl;
+    }
 
-    myDog.feed();
-    myDog.displayStatus();
+    for(int i = 0; i < 2; i++) {
+        catArray[i].displayStatus();
+        catArray[i].feed();
+        catArray[i].play();
+        catArray[i].makeSound();
+        catArray[i].displayStatus();
+        std::cout << std::endl;
+    }
 
-    myDog.play();
-    myDog.displayStatus();
-
-    myDog.makeSound();
-
-    myCat.feed();
-    myCat.displayStatus();
-
-    myCat.play();
-    myCat.displayStatus();
-
-    myCat.makeSound();
+    for(int i = 0; i < 2; i++) {
+        birdArray[i].displayStatus();
+        birdArray[i].feed();
+        birdArray[i].play();
+        birdArray[i].makeSound();
+        birdArray[i].displayStatus();
+        std::cout << std::endl;
+    }
 
     return 0;
 }
