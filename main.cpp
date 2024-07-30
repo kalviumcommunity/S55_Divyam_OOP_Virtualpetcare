@@ -31,7 +31,7 @@ public:
 
     void play() override {
         health += 5;
-        happiness += 10;
+        happiness += 15;
         std::cout << "Playing with the dog." << std::endl;
     }
 
@@ -43,7 +43,7 @@ public:
 
 int main() {
     // Creating a Dog object
-    Dog myDog("Buddy", 3);
+    Dog myDog("Bruno", 4);
 
     // Displaying initial status
     myDog.displayStatus();
