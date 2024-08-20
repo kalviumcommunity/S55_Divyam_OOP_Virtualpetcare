@@ -8,10 +8,17 @@ protected:
     int health;
     int happiness;
 
-public:
-    Pet(std::string petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {}
+    static int totalPets;
+    static int totalFoodGiven;
 
-    virtual ~Pet() {}  
+public:
+    Pet(std::string petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {
+        totalPets++; 
+    }
+
+    virtual ~Pet() {
+        totalPets--; 
+    }
 
     void displayStatus() {
         std::cout << "Name: " << name << ", Age: " << age << ", Health: " << health << ", Happiness: " << happiness << std::endl;
@@ -19,7 +26,23 @@ public:
 
     virtual void feed() = 0;
     virtual void play() = 0;
+
+    static void displayTotalPets() {
+        std::cout << "Total Pets: " << totalPets << std::endl;
+    }
+
+    static void displayTotalFoodGiven() {
+        std::cout << "Total Food Given: " << totalFoodGiven << std::endl;
+    }
+
+protected:
+    void incrementFoodGiven(int amount) {
+        totalFoodGiven += amount;
+    }
 };
+
+int Pet::totalPets = 0;
+int Pet::totalFoodGiven = 0;
 
 class Dog : public Pet {
 public:
@@ -28,6 +51,7 @@ public:
     void feed() override {
         this->health += 10;
         this->happiness += 5;
+        incrementFoodGiven(10);  
         std::cout << "Feeding the dog." << std::endl;
     }
 
@@ -49,6 +73,7 @@ public:
     void feed() override {
         this->health += 8;
         this->happiness += 7;
+        incrementFoodGiven(8);
         std::cout << "Feeding the cat." << std::endl;
     }
 
@@ -70,6 +95,7 @@ public:
     void feed() override {
         this->health += 7;
         this->happiness += 6;
+        incrementFoodGiven(7); 
         std::cout << "Feeding the bird." << std::endl;
     }
 
@@ -85,9 +111,12 @@ public:
 };
 
 int main() {
+    
     Pet* dogArray[2] = { new Dog("Bruno", 3), new Dog("Max", 2) };
     Pet* catArray[2] = { new Cat("Whiskers", 2), new Cat("Mittens", 1) };
     Pet* birdArray[2] = { new Bird("Tweety", 1), new Bird("Polly", 3) };
+
+    Pet::displayTotalPets();  
 
     for(int i = 0; i < 2; i++) {
         dogArray[i]->displayStatus();
@@ -116,12 +145,15 @@ int main() {
         std::cout << std::endl;
     }
 
-    
+    Pet::displayTotalFoodGiven();  
+
     for(int i = 0; i < 2; i++) {
         delete dogArray[i];
         delete catArray[i];
         delete birdArray[i];
     }
+
+    Pet::displayTotalPets(); 
 
     return 0;
 }
