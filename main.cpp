@@ -11,6 +11,8 @@ protected:
 public:
     Pet(std::string petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {}
 
+    virtual ~Pet() {}  
+
     void displayStatus() {
         std::cout << "Name: " << name << ", Age: " << age << ", Health: " << health << ", Happiness: " << happiness << std::endl;
     }
@@ -83,35 +85,42 @@ public:
 };
 
 int main() {
-    Dog dogArray[2] = { Dog("Bruno", 3), Dog("Max", 2) };
-    Cat catArray[2] = { Cat("Whiskers", 2), Cat("Mittens", 1) };
-    Bird birdArray[2] = { Bird("Tweety", 1), Bird("Polly", 3) };
+    Pet* dogArray[2] = { new Dog("Bruno", 3), new Dog("Max", 2) };
+    Pet* catArray[2] = { new Cat("Whiskers", 2), new Cat("Mittens", 1) };
+    Pet* birdArray[2] = { new Bird("Tweety", 1), new Bird("Polly", 3) };
 
     for(int i = 0; i < 2; i++) {
-        dogArray[i].displayStatus();
-        dogArray[i].feed();
-        dogArray[i].play();
-        dogArray[i].makeSound();
-        dogArray[i].displayStatus();
+        dogArray[i]->displayStatus();
+        dogArray[i]->feed();
+        dogArray[i]->play();
+        static_cast<Dog*>(dogArray[i])->makeSound();
+        dogArray[i]->displayStatus();
         std::cout << std::endl;
     }
 
     for(int i = 0; i < 2; i++) {
-        catArray[i].displayStatus();
-        catArray[i].feed();
-        catArray[i].play();
-        catArray[i].makeSound();
-        catArray[i].displayStatus();
+        catArray[i]->displayStatus();
+        catArray[i]->feed();
+        catArray[i]->play();
+        static_cast<Cat*>(catArray[i])->makeSound();
+        catArray[i]->displayStatus();
         std::cout << std::endl;
     }
 
     for(int i = 0; i < 2; i++) {
-        birdArray[i].displayStatus();
-        birdArray[i].feed();
-        birdArray[i].play();
-        birdArray[i].makeSound();
-        birdArray[i].displayStatus();
+        birdArray[i]->displayStatus();
+        birdArray[i]->feed();
+        birdArray[i]->play();
+        static_cast<Bird*>(birdArray[i])->makeSound();
+        birdArray[i]->displayStatus();
         std::cout << std::endl;
+    }
+
+    
+    for(int i = 0; i < 2; i++) {
+        delete dogArray[i];
+        delete catArray[i];
+        delete birdArray[i];
     }
 
     return 0;
