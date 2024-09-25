@@ -13,11 +13,11 @@ protected:
 
 public:
     Pet(std::string petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {
-        totalPets++; 
+        totalPets++;
     }
 
     virtual ~Pet() {
-        totalPets--; 
+        totalPets--;
     }
 
     void displayStatus() {
@@ -39,6 +39,27 @@ protected:
     void incrementFoodGiven(int amount) {
         totalFoodGiven += amount;
     }
+    
+    // Encapsulation: Accessors and Mutators for health and happiness
+    int getHealth() const {
+        return health;
+    }
+
+    void setHealth(int newHealth) {
+        if (newHealth >= 0 && newHealth <= 100) {
+            health = newHealth;
+        }
+    }
+
+    int getHappiness() const {
+        return happiness;
+    }
+
+    void setHappiness(int newHappiness) {
+        if (newHappiness >= 0 && newHappiness <= 100) {
+            happiness = newHappiness;
+        }
+    }
 };
 
 int Pet::totalPets = 0;
@@ -49,15 +70,15 @@ public:
     Dog(std::string petName, int petAge) : Pet(petName, petAge) {}
 
     void feed() override {
-        this->health += 10;
-        this->happiness += 5;
+        setHealth(getHealth() + 10); // Using encapsulation
+        setHappiness(getHappiness() + 5); // Using encapsulation
         incrementFoodGiven(10);  
         std::cout << "Feeding the dog." << std::endl;
     }
 
     void play() override {
-        this->health += 5;
-        this->happiness += 10;
+        setHealth(getHealth() + 5); // Using encapsulation
+        setHappiness(getHappiness() + 10); // Using encapsulation
         std::cout << "Playing with the dog." << std::endl;
     }
 
@@ -71,15 +92,15 @@ public:
     Cat(std::string petName, int petAge) : Pet(petName, petAge) {}
 
     void feed() override {
-        this->health += 8;
-        this->happiness += 7;
+        setHealth(getHealth() + 8); // Using encapsulation
+        setHappiness(getHappiness() + 7); // Using encapsulation
         incrementFoodGiven(8);
         std::cout << "Feeding the cat." << std::endl;
     }
 
     void play() override {
-        this->health += 6;
-        this->happiness += 9;
+        setHealth(getHealth() + 6); // Using encapsulation
+        setHappiness(getHappiness() + 9); // Using encapsulation
         std::cout << "Playing with the cat." << std::endl;
     }
 
@@ -87,6 +108,7 @@ public:
         std::cout << "Meow!" << std::endl;
     }
 };
+
 
 class Bird : public Pet {
 public:
@@ -110,8 +132,8 @@ public:
     }
 };
 
+
 int main() {
-    
     Pet* dogArray[2] = { new Dog("Bruno", 3), new Dog("Max", 2) };
     Pet* catArray[2] = { new Cat("Whiskers", 2), new Cat("Mittens", 1) };
     Pet* birdArray[2] = { new Bird("Tweety", 1), new Bird("Polly", 3) };
