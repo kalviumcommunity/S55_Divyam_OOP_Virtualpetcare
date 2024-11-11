@@ -3,7 +3,6 @@
 
 class Pet {
 private:
-    // Private data members to enforce abstraction
     std::string name;
     int age;
     int health;
@@ -13,17 +12,33 @@ private:
     static int totalFoodGiven;
 
 protected:
-    // Protected methods to access sensitive information
     void incrementFoodGiven(int amount) { totalFoodGiven += amount; }
-    
+
 public:
-    Pet(const std::string& petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {
-        totalPets++; 
+    // Default constructor
+    Pet() : name("Unknown"), age(0), health(100), happiness(100) {
+        totalPets++;
+        std::cout << "Default Constructor Called: A new pet has been created!" << std::endl;
     }
 
-    virtual ~Pet() { totalPets--; }
+    // Parameterized constructor
+    Pet(const std::string& petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {
+        totalPets++;
+        std::cout << "Parameterized Constructor Called: A new pet named " << name << " has been created!" << std::endl;
+    }
 
-    // Accessor and Mutator methods for encapsulation
+    // Copy constructor
+    Pet(const Pet& other) : name(other.name), age(other.age), health(other.health), happiness(other.happiness) {
+        totalPets++;
+        std::cout << "Copy Constructor Called: A new pet has been created by copying " << other.name << "!" << std::endl;
+    }
+
+    // Destructor
+    virtual ~Pet() {
+        totalPets--;
+        std::cout << "Destructor Called: Pet " << name << " has been deleted." << std::endl;
+    }
+
     std::string getName() const { return name; }
     void setName(const std::string& newName) { name = newName; }
 
@@ -36,10 +51,9 @@ public:
     int getHappiness() const { return happiness; }
     void setHappiness(int newHappiness) { happiness = (newHappiness >= 0) ? newHappiness : 0; }
 
-    virtual void feed() = 0;  // Abstract methods
+    virtual void feed() = 0;
     virtual void play() = 0;
 
-    // Static member functions to demonstrate abstraction with access control
     static void displayTotalPets() { std::cout << "Total Pets: " << totalPets << std::endl; }
     static void displayTotalFoodGiven() { std::cout << "Total Food Given: " << totalFoodGiven << std::endl; }
 
@@ -53,7 +67,11 @@ int Pet::totalFoodGiven = 0;
 
 class Dog : public Pet {
 public:
+    Dog() : Pet() {}
+
     Dog(const std::string& petName, int petAge) : Pet(petName, petAge) {}
+
+    Dog(const Dog& other) : Pet(other) {}
 
     void feed() override {
         setHealth(getHealth() + 10);
@@ -73,7 +91,11 @@ public:
 
 class Cat : public Pet {
 public:
+    Cat() : Pet() {}
+
     Cat(const std::string& petName, int petAge) : Pet(petName, petAge) {}
+
+    Cat(const Cat& other) : Pet(other) {}
 
     void feed() override {
         setHealth(getHealth() + 8);
@@ -91,69 +113,21 @@ public:
     void makeSound() const { std::cout << "Meow!" << std::endl; }
 };
 
-class Bird : public Pet {
-public:
-    Bird(const std::string& petName, int petAge) : Pet(petName, petAge) {}
-
-    void feed() override {
-        setHealth(getHealth() + 7);
-        setHappiness(getHappiness() + 6);
-        incrementFoodGiven(7); 
-        std::cout << "Feeding the bird." << std::endl;
-    }
-
-    void play() override {
-        setHealth(getHealth() + 4);
-        setHappiness(getHappiness() + 8);
-        std::cout << "Playing with the bird." << std::endl;
-    }
-
-    void makeSound() const { std::cout << "Chirp!" << std::endl; }
-};
-
 int main() {
-    Pet* dogArray[2] = { new Dog("Bruno", 3), new Dog("Max", 2) };
-    Pet* catArray[2] = { new Cat("Whiskers", 2), new Cat("Mittens", 1) };
-    Pet* birdArray[2] = { new Bird("Tweety", 1), new Bird("Polly", 3) };
+    // Using Default Constructor
+    Dog defaultDog;
+    defaultDog.displayStatus();
+
+    // Using Parameterized Constructor
+    Dog bruno("Bruno", 3);
+    bruno.displayStatus();
+
+    // Using Copy Constructor
+    Dog copyDog = bruno;
+    copyDog.displayStatus();
 
     Pet::displayTotalPets();
 
-    for(int i = 0; i < 2; i++) {
-        dogArray[i]->displayStatus();
-        dogArray[i]->feed();
-        dogArray[i]->play();
-        static_cast<Dog*>(dogArray[i])->makeSound();
-        dogArray[i]->displayStatus();
-        std::cout << std::endl;
-    }
-
-    for(int i = 0; i < 2; i++) {
-        catArray[i]->displayStatus();
-        catArray[i]->feed();
-        catArray[i]->play();
-        static_cast<Cat*>(catArray[i])->makeSound();
-        catArray[i]->displayStatus();
-        std::cout << std::endl;
-    }
-
-    for(int i = 0; i < 2; i++) {
-        birdArray[i]->displayStatus();
-        birdArray[i]->feed();
-        birdArray[i]->play();
-        static_cast<Bird*>(birdArray[i])->makeSound();
-        birdArray[i]->displayStatus();
-        std::cout << std::endl;
-    }
-
-    Pet::displayTotalFoodGiven();
-
-    for(int i = 0; i < 2; i++) {
-        delete dogArray[i];
-        delete catArray[i];
-        delete birdArray[i];
-    }
-
-    Pet::displayTotalPets();
-
+    // Testing Destructors by deleting objects
     return 0;
 }
