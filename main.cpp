@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+// Base class
 class Pet {
 private:
     std::string name;
@@ -65,6 +66,7 @@ public:
 int Pet::totalPets = 0;
 int Pet::totalFoodGiven = 0;
 
+// Single Inheritance - ServiceDog derives from Dog
 class Dog : public Pet {
 public:
     Dog() : Pet() {}
@@ -76,7 +78,7 @@ public:
     void feed() override {
         setHealth(getHealth() + 10);
         setHappiness(getHappiness() + 5);
-        incrementFoodGiven(10);  
+        incrementFoodGiven(10);
         std::cout << "Feeding the dog." << std::endl;
     }
 
@@ -89,6 +91,16 @@ public:
     void makeSound() const { std::cout << "Woof!" << std::endl; }
 };
 
+class ServiceDog : public Dog {
+public:
+    ServiceDog() : Dog() {}
+
+    ServiceDog(const std::string& petName, int petAge) : Dog(petName, petAge) {}
+
+    void assist() const { std::cout << "The service dog is assisting its owner." << std::endl; }
+};
+
+// Hierarchical Inheritance - Parrot and Cat derive from Pet
 class Cat : public Pet {
 public:
     Cat() : Pet() {}
@@ -113,21 +125,46 @@ public:
     void makeSound() const { std::cout << "Meow!" << std::endl; }
 };
 
-int main() {
-    // Using Default Constructor
-    Dog defaultDog;
-    defaultDog.displayStatus();
+class Parrot : public Pet {
+public:
+    Parrot() : Pet() {}
 
-    // Using Parameterized Constructor
+    Parrot(const std::string& petName, int petAge) : Pet(petName, petAge) {}
+
+    Parrot(const Parrot& other) : Pet(other) {}
+
+    void feed() override {
+        setHealth(getHealth() + 7);
+        setHappiness(getHappiness() + 6);
+        incrementFoodGiven(7);
+        std::cout << "Feeding the parrot." << std::endl;
+    }
+
+    void play() override {
+        setHealth(getHealth() + 5);
+        setHappiness(getHappiness() + 8);
+        std::cout << "Playing with the parrot." << std::endl;
+    }
+
+    void makeSound() const { std::cout << "Squawk!" << std::endl; }
+};
+
+int main() {
     Dog bruno("Bruno", 3);
     bruno.displayStatus();
 
-    // Using Copy Constructor
-    Dog copyDog = bruno;
-    copyDog.displayStatus();
+    ServiceDog max("Max", 5);
+    max.assist();
+    max.displayStatus();
+
+    Cat whiskers("Whiskers", 2);
+    whiskers.displayStatus();
+
+    Parrot polly("Polly", 1);
+    polly.makeSound();
+    polly.displayStatus();
 
     Pet::displayTotalPets();
 
-    // Testing Destructors by deleting objects
     return 0;
 }
