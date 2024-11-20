@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-// Base class
+// Abstract Base Class
 class Pet {
 private:
     std::string name;
@@ -10,31 +10,22 @@ private:
     int happiness;
 
     static int totalPets;
-    static int totalFoodGiven;
 
 protected:
-    void incrementFoodGiven(int amount) { totalFoodGiven += amount; }
+    void incrementTotalPets() { totalPets++; }
 
 public:
-    // Default constructor
+    // Constructors
     Pet() : name("Unknown"), age(0), health(100), happiness(100) {
         totalPets++;
         std::cout << "Default Constructor Called: A new pet has been created!" << std::endl;
     }
 
-    // Parameterized constructor
     Pet(const std::string& petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {
         totalPets++;
         std::cout << "Parameterized Constructor Called: A new pet named " << name << " has been created!" << std::endl;
     }
 
-    // Copy constructor
-    Pet(const Pet& other) : name(other.name), age(other.age), health(other.health), happiness(other.happiness) {
-        totalPets++;
-        std::cout << "Copy Constructor Called: A new pet has been created by copying " << other.name << "!" << std::endl;
-    }
-
-    // Destructor
     virtual ~Pet() {
         totalPets--;
         std::cout << "Destructor Called: Pet " << name << " has been deleted." << std::endl;
@@ -52,25 +43,16 @@ public:
     int getHappiness() const { return happiness; }
     void setHappiness(int newHappiness) { happiness = (newHappiness >= 0) ? newHappiness : 0; }
 
-    // Function Overloading: Multiple ways to feed the pet
-    void feed() {
-        setHealth(getHealth() + 10);
-        setHappiness(getHappiness() + 5);
-        incrementFoodGiven(10);
-        std::cout << "Feeding the pet a regular meal." << std::endl;
-    }
-
-    void feed(int foodAmount) {
-        setHealth(getHealth() + foodAmount / 2);
-        setHappiness(getHappiness() + foodAmount / 3);
-        incrementFoodGiven(foodAmount);
-        std::cout << "Feeding the pet with " << foodAmount << " units of food." << std::endl;
-    }
-
+    // Abstract Methods (Pure Virtual Functions)
+    virtual void feed() = 0;
     virtual void play() = 0;
 
+    // Virtual Function with Default Implementation
+    virtual void makeSound() const {
+        std::cout << "This is a generic pet sound." << std::endl;
+    }
+
     static void displayTotalPets() { std::cout << "Total Pets: " << totalPets << std::endl; }
-    static void displayTotalFoodGiven() { std::cout << "Total Food Given: " << totalFoodGiven << std::endl; }
 
     void displayStatus() const {
         std::cout << "Name: " << getName() << ", Age: " << getAge() << ", Health: " << getHealth() << ", Happiness: " << getHappiness() << std::endl;
@@ -78,17 +60,20 @@ public:
 };
 
 int Pet::totalPets = 0;
-int Pet::totalFoodGiven = 0;
 
-// Derived class - Dog
+// Derived Class - Dog
 class Dog : public Pet {
 public:
-    // Constructor Overloading
+    // Constructors
     Dog() : Pet() {}
-
     Dog(const std::string& petName, int petAge) : Pet(petName, petAge) {}
 
-    Dog(const Dog& other) : Pet(other) {}
+    // Overriding Virtual Functions
+    void feed() override {
+        setHealth(getHealth() + 10);
+        setHappiness(getHappiness() + 5);
+        std::cout << "Feeding the dog." << std::endl;
+    }
 
     void play() override {
         setHealth(getHealth() + 5);
@@ -96,18 +81,24 @@ public:
         std::cout << "Playing with the dog." << std::endl;
     }
 
-    void makeSound() const { std::cout << "Woof!" << std::endl; }
+    void makeSound() const override {
+        std::cout << "Woof!" << std::endl;
+    }
 };
 
-// Derived class - Cat
+// Derived Class - Cat
 class Cat : public Pet {
 public:
-    // Constructor Overloading
+    // Constructors
     Cat() : Pet() {}
-
     Cat(const std::string& petName, int petAge) : Pet(petName, petAge) {}
 
-    Cat(const Cat& other) : Pet(other) {}
+    // Overriding Virtual Functions
+    void feed() override {
+        setHealth(getHealth() + 8);
+        setHappiness(getHappiness() + 7);
+        std::cout << "Feeding the cat." << std::endl;
+    }
 
     void play() override {
         setHealth(getHealth() + 6);
@@ -115,30 +106,31 @@ public:
         std::cout << "Playing with the cat." << std::endl;
     }
 
-    void makeSound() const { std::cout << "Meow!" << std::endl; }
+    void makeSound() const override {
+        std::cout << "Meow!" << std::endl;
+    }
 };
 
 int main() {
-    // Demonstrating constructor overloading
-    Dog defaultDog;
-    defaultDog.displayStatus();
+    // Demonstrating Abstract Class and Virtual Functions
+    Pet* pet1 = new Dog("Bruno", 3); // Using polymorphism
+    Pet* pet2 = new Cat("Whiskers", 2);
 
-    Dog bruno("Bruno", 3);
-    bruno.displayStatus();
+    pet1->displayStatus();
+    pet1->feed();
+    pet1->play();
+    pet1->makeSound();
 
-    Cat whiskers("Whiskers", 2);
-    whiskers.displayStatus();
-
-    // Demonstrating function overloading
-    bruno.feed(); // Regular meal
-    whiskers.feed(15); // Feeding with custom amount
-
-    // Playing with pets
-    bruno.play();
-    whiskers.play();
+    pet2->displayStatus();
+    pet2->feed();
+    pet2->play();
+    pet2->makeSound();
 
     Pet::displayTotalPets();
-    Pet::displayTotalFoodGiven();
+
+    // Cleaning up dynamically allocated memory
+    delete pet1;
+    delete pet2;
 
     return 0;
 }
