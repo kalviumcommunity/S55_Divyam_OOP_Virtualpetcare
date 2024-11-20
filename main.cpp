@@ -52,7 +52,21 @@ public:
     int getHappiness() const { return happiness; }
     void setHappiness(int newHappiness) { happiness = (newHappiness >= 0) ? newHappiness : 0; }
 
-    virtual void feed() = 0;
+    // Function Overloading: Multiple ways to feed the pet
+    void feed() {
+        setHealth(getHealth() + 10);
+        setHappiness(getHappiness() + 5);
+        incrementFoodGiven(10);
+        std::cout << "Feeding the pet a regular meal." << std::endl;
+    }
+
+    void feed(int foodAmount) {
+        setHealth(getHealth() + foodAmount / 2);
+        setHappiness(getHappiness() + foodAmount / 3);
+        incrementFoodGiven(foodAmount);
+        std::cout << "Feeding the pet with " << foodAmount << " units of food." << std::endl;
+    }
+
     virtual void play() = 0;
 
     static void displayTotalPets() { std::cout << "Total Pets: " << totalPets << std::endl; }
@@ -66,21 +80,15 @@ public:
 int Pet::totalPets = 0;
 int Pet::totalFoodGiven = 0;
 
-// Single Inheritance - ServiceDog derives from Dog
+// Derived class - Dog
 class Dog : public Pet {
 public:
+    // Constructor Overloading
     Dog() : Pet() {}
 
     Dog(const std::string& petName, int petAge) : Pet(petName, petAge) {}
 
     Dog(const Dog& other) : Pet(other) {}
-
-    void feed() override {
-        setHealth(getHealth() + 10);
-        setHappiness(getHappiness() + 5);
-        incrementFoodGiven(10);
-        std::cout << "Feeding the dog." << std::endl;
-    }
 
     void play() override {
         setHealth(getHealth() + 5);
@@ -91,30 +99,15 @@ public:
     void makeSound() const { std::cout << "Woof!" << std::endl; }
 };
 
-class ServiceDog : public Dog {
-public:
-    ServiceDog() : Dog() {}
-
-    ServiceDog(const std::string& petName, int petAge) : Dog(petName, petAge) {}
-
-    void assist() const { std::cout << "The service dog is assisting its owner." << std::endl; }
-};
-
-// Hierarchical Inheritance - Parrot and Cat derive from Pet
+// Derived class - Cat
 class Cat : public Pet {
 public:
+    // Constructor Overloading
     Cat() : Pet() {}
 
     Cat(const std::string& petName, int petAge) : Pet(petName, petAge) {}
 
     Cat(const Cat& other) : Pet(other) {}
-
-    void feed() override {
-        setHealth(getHealth() + 8);
-        setHappiness(getHappiness() + 7);
-        incrementFoodGiven(8);
-        std::cout << "Feeding the cat." << std::endl;
-    }
 
     void play() override {
         setHealth(getHealth() + 6);
@@ -125,46 +118,27 @@ public:
     void makeSound() const { std::cout << "Meow!" << std::endl; }
 };
 
-class Parrot : public Pet {
-public:
-    Parrot() : Pet() {}
-
-    Parrot(const std::string& petName, int petAge) : Pet(petName, petAge) {}
-
-    Parrot(const Parrot& other) : Pet(other) {}
-
-    void feed() override {
-        setHealth(getHealth() + 7);
-        setHappiness(getHappiness() + 6);
-        incrementFoodGiven(7);
-        std::cout << "Feeding the parrot." << std::endl;
-    }
-
-    void play() override {
-        setHealth(getHealth() + 5);
-        setHappiness(getHappiness() + 8);
-        std::cout << "Playing with the parrot." << std::endl;
-    }
-
-    void makeSound() const { std::cout << "Squawk!" << std::endl; }
-};
-
 int main() {
+    // Demonstrating constructor overloading
+    Dog defaultDog;
+    defaultDog.displayStatus();
+
     Dog bruno("Bruno", 3);
     bruno.displayStatus();
-
-    ServiceDog max("Max", 5);
-    max.assist();
-    max.displayStatus();
 
     Cat whiskers("Whiskers", 2);
     whiskers.displayStatus();
 
-    Parrot polly("Polly", 1);
-    polly.makeSound();
-    polly.displayStatus();
+    // Demonstrating function overloading
+    bruno.feed(); // Regular meal
+    whiskers.feed(15); // Feeding with custom amount
+
+    // Playing with pets
+    bruno.play();
+    whiskers.play();
 
     Pet::displayTotalPets();
+    Pet::displayTotalFoodGiven();
 
     return 0;
 }
