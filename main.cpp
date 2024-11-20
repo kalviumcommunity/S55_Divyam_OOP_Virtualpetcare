@@ -1,41 +1,16 @@
 #include <iostream>
 #include <string>
 
-// Abstract Base Class
-class Pet {
+// Separate class for pet status (follows SRP)
+class PetStatus {
 private:
-    std::string name;
-    int age;
     int health;
     int happiness;
 
-    static int totalPets;
-
-protected:
-    void incrementTotalPets() { totalPets++; }
-
 public:
-    // Constructors
-    Pet() : name("Unknown"), age(0), health(100), happiness(100) {
-        totalPets++;
-        std::cout << "Default Constructor Called: A new pet has been created!" << std::endl;
-    }
-
-    Pet(const std::string& petName, int petAge) : name(petName), age(petAge), health(100), happiness(100) {
-        totalPets++;
-        std::cout << "Parameterized Constructor Called: A new pet named " << name << " has been created!" << std::endl;
-    }
-
-    virtual ~Pet() {
-        totalPets--;
-        std::cout << "Destructor Called: Pet " << name << " has been deleted." << std::endl;
-    }
-
-    std::string getName() const { return name; }
-    void setName(const std::string& newName) { name = newName; }
-
-    int getAge() const { return age; }
-    void setAge(int newAge) { age = newAge; }
+    // Constructor
+    PetStatus(int initialHealth = 100, int initialHappiness = 100) 
+        : health(initialHealth), happiness(initialHappiness) {}
 
     int getHealth() const { return health; }
     void setHealth(int newHealth) { health = (newHealth >= 0) ? newHealth : 0; }
@@ -43,41 +18,58 @@ public:
     int getHappiness() const { return happiness; }
     void setHappiness(int newHappiness) { happiness = (newHappiness >= 0) ? newHappiness : 0; }
 
-    // Abstract Methods (Pure Virtual Functions)
-    virtual void feed() = 0;
-    virtual void play() = 0;
-
-    // Virtual Function with Default Implementation
-    virtual void makeSound() const {
-        std::cout << "This is a generic pet sound." << std::endl;
-    }
-
-    static void displayTotalPets() { std::cout << "Total Pets: " << totalPets << std::endl; }
-
-    void displayStatus() const {
-        std::cout << "Name: " << getName() << ", Age: " << getAge() << ", Health: " << getHealth() << ", Happiness: " << getHappiness() << std::endl;
+    void display() const {
+        std::cout << "Health: " << health << ", Happiness: " << happiness << std::endl;
     }
 };
 
-int Pet::totalPets = 0;
+// Abstract Base Class - Pet
+class Pet {
+private:
+    std::string name;
+    int age;
+
+protected:
+    PetStatus status; // Composition to manage health and happiness
+
+public:
+    // Constructor
+    Pet(const std::string& petName, int petAge) 
+        : name(petName), age(petAge), status() {}
+
+    virtual ~Pet() {}
+
+    std::string getName() const { return name; }
+    void setName(const std::string& newName) { name = newName; }
+
+    int getAge() const { return age; }
+    void setAge(int newAge) { age = newAge; }
+
+    // Abstract methods (to be implemented by derived classes)
+    virtual void feed() = 0;
+    virtual void play() = 0;
+    virtual void makeSound() const = 0;
+
+    void displayStatus() const {
+        std::cout << "Name: " << name << ", Age: " << age << std::endl;
+        status.display();
+    }
+};
 
 // Derived Class - Dog
 class Dog : public Pet {
 public:
-    // Constructors
-    Dog() : Pet() {}
     Dog(const std::string& petName, int petAge) : Pet(petName, petAge) {}
 
-    // Overriding Virtual Functions
     void feed() override {
-        setHealth(getHealth() + 10);
-        setHappiness(getHappiness() + 5);
+        status.setHealth(status.getHealth() + 10);
+        status.setHappiness(status.getHappiness() + 5);
         std::cout << "Feeding the dog." << std::endl;
     }
 
     void play() override {
-        setHealth(getHealth() + 5);
-        setHappiness(getHappiness() + 10);
+        status.setHealth(status.getHealth() + 5);
+        status.setHappiness(status.getHappiness() + 10);
         std::cout << "Playing with the dog." << std::endl;
     }
 
@@ -89,20 +81,17 @@ public:
 // Derived Class - Cat
 class Cat : public Pet {
 public:
-    // Constructors
-    Cat() : Pet() {}
     Cat(const std::string& petName, int petAge) : Pet(petName, petAge) {}
 
-    // Overriding Virtual Functions
     void feed() override {
-        setHealth(getHealth() + 8);
-        setHappiness(getHappiness() + 7);
+        status.setHealth(status.getHealth() + 8);
+        status.setHappiness(status.getHappiness() + 7);
         std::cout << "Feeding the cat." << std::endl;
     }
 
     void play() override {
-        setHealth(getHealth() + 6);
-        setHappiness(getHappiness() + 9);
+        status.setHealth(status.getHealth() + 6);
+        status.setHappiness(status.getHappiness() + 9);
         std::cout << "Playing with the cat." << std::endl;
     }
 
@@ -112,25 +101,25 @@ public:
 };
 
 int main() {
-    // Demonstrating Abstract Class and Virtual Functions
-    Pet* pet1 = new Dog("Bruno", 3); // Using polymorphism
-    Pet* pet2 = new Cat("Whiskers", 2);
+    Dog bruno("Bruno", 3);
+    Cat whiskers("Whiskers", 2);
 
-    pet1->displayStatus();
-    pet1->feed();
-    pet1->play();
-    pet1->makeSound();
+    // Display initial statuses
+    bruno.displayStatus();
+    whiskers.displayStatus();
 
-    pet2->displayStatus();
-    pet2->feed();
-    pet2->play();
-    pet2->makeSound();
+    // Perform actions
+    bruno.feed();
+    bruno.play();
+    bruno.makeSound();
 
-    Pet::displayTotalPets();
+    whiskers.feed();
+    whiskers.play();
+    whiskers.makeSound();
 
-    // Cleaning up dynamically allocated memory
-    delete pet1;
-    delete pet2;
+    // Display updated statuses
+    bruno.displayStatus();
+    whiskers.displayStatus();
 
     return 0;
 }
